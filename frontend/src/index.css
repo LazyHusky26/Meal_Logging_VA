@@ -1,0 +1,61 @@
+body {
+  font-family: system-ui, sans-serif;
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  color: #1a1a1a;
+}
+
+h1 {
+  font-size: 1.4rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid #e2e2e2;
+  font-size: 0.9rem;
+}
+
+th {
+  color: #666;
+  font-weight: 600;
+}
+
+.macro {
+  color: #555;
+  font-size: 0.85rem;
+}
+
+.actions button {
+  margin-right: 0.4rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.edit-form {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.edit-form input {
+  width: 4.5rem;
+}
+
+.error {
+  color: #b00020;
+  font-size: 0.85rem;
+}
+
+.empty {
+  color: #777;
+  margin-top: 1rem;
+}
