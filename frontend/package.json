@@ -1,0 +1,6 @@
+{
+  "name": "meal-logging-va-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Single-page React view of logged meals"
+}

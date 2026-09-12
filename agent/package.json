@@ -1,0 +1,11 @@
+{
+  "name": "meal-logging-va-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "LiveKit voice agent for logging, editing, and deleting meal entries",
+  "scripts": {
+    "start": "node src/agent.js"
+  },
+  "dependencies": {}
+}
