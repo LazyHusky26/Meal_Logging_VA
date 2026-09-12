@@ -5,7 +5,11 @@
   "type": "module",
   "description": "LiveKit voice agent for logging, editing, and deleting meal entries",
   "scripts": {
-    "start": "node src/agent.js"
+    "start": "node src/main.js start",
+    "dev": "node src/main.js dev"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@livekit/agents": "^1.8.1",
+    "dotenv": "^17.4.2"
+  }
 }

@@ -10,12 +10,14 @@ function dayRange(dateStr) {
   return { start, end };
 }
 
-// GET /api/meals?date=YYYY-MM-DD&from=ISO&to=ISO&food=chai&limit=50
+// GET /api/meals?date=YYYY-MM-DD&from=ISO&to=ISO&food=chai&limit=50&sort=loggedAt|createdAt
 // - date: shorthand for that whole day (local server time)
 // - from/to: explicit range, takes precedence over date; either may be omitted
 // - food: case-insensitive substring match against foodName
+// - sort: which timestamp to order by, descending (default loggedAt; createdAt is what the
+//   agent uses to resolve "that"/"the last thing I logged", since loggedAt can be backdated)
 router.get("/", async (req, res) => {
-  const { date, from, to, food, limit } = req.query;
+  const { date, from, to, food, limit, sort } = req.query;
   const filter = {};
 
   if (date) {
@@ -31,8 +33,10 @@ router.get("/", async (req, res) => {
     filter.foodName = { $regex: food, $options: "i" };
   }
 
+  const sortField = sort === "createdAt" ? "createdAt" : "loggedAt";
+
   const meals = await MealLog.find(filter)
-    .sort({ loggedAt: -1 })
+    .sort({ [sortField]: -1 })
     .limit(Math.min(Number(limit) || 50, 200));
 
   res.json(meals);
