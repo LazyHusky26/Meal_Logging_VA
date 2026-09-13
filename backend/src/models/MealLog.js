@@ -16,12 +16,11 @@ const mealLogSchema = new mongoose.Schema(
       enum: ["breakfast", "lunch", "dinner", "snack", "other"],
       default: "other",
     },
-    // when the meal was actually eaten (can be backdated, e.g. "this morning")
+    // when the meal was eaten (can be backdated); createdAt (below) is when it was logged
     loggedAt: { type: Date, required: true, default: Date.now },
-    // raw phrase this entry was parsed from, useful for debugging voice parsing
     rawTranscript: { type: String },
   },
-  { timestamps: true } // createdAt = when the row was written, used to resolve "that"/"make that three rotis"
+  { timestamps: true }
 );
 
 export default mongoose.model("MealLog", mealLogSchema);

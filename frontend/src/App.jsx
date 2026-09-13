@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { fetchMeals, updateMeal, deleteMeal } from "./api.js";
+import { BACKEND_URL, fetchMeals, updateMeal, deleteMeal } from "./api.js";
 import { getRangeBounds, RANGE_LABELS } from "./dateRanges.js";
 import DayGroup from "./components/DayGroup.jsx";
 import FilterBar from "./components/FilterBar.jsx";
@@ -28,6 +28,12 @@ export default function App() {
 
   useEffect(() => {
     load();
+  }, [load]);
+
+  useEffect(() => {
+    const source = new EventSource(`${BACKEND_URL}/api/events`);
+    source.onmessage = () => load();
+    return () => source.close();
   }, [load]);
 
   async function handleUpdate(id, changes) {

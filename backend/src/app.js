@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import eventsRouter from "./routes/events.js";
 import foodsRouter from "./routes/foods.js";
 import mealsRouter from "./routes/meals.js";
 import voiceRouter from "./routes/voice.js";
@@ -17,6 +18,7 @@ export function createApp() {
   app.use("/api/foods", foodsRouter);
   app.use("/api/meals", mealsRouter);
   app.use("/api/voice", voiceRouter);
+  app.use("/api/events", eventsRouter);
 
   return app;
 }

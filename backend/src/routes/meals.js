@@ -1,6 +1,7 @@
 import { Router } from "express";
 import MealLog from "../models/MealLog.js";
 import { resolveMealItem } from "../services/foodsService.js";
+import { broadcastMealsChanged } from "../services/sseHub.js";
 
 const router = Router();
 
@@ -10,12 +11,6 @@ function dayRange(dateStr) {
   return { start, end };
 }
 
-// GET /api/meals?date=YYYY-MM-DD&from=ISO&to=ISO&food=chai&limit=50&sort=loggedAt|createdAt
-// - date: shorthand for that whole day (local server time)
-// - from/to: explicit range, takes precedence over date; either may be omitted
-// - food: case-insensitive substring match against foodName
-// - sort: which timestamp to order by, descending (default loggedAt; createdAt is what the
-//   agent uses to resolve "that"/"the last thing I logged", since loggedAt can be backdated)
 router.get("/", async (req, res) => {
   const { date, from, to, food, limit, sort } = req.query;
   const filter = {};
@@ -42,8 +37,6 @@ router.get("/", async (req, res) => {
   res.json(meals);
 });
 
-// POST /api/meals
-// body: { foodId? | foodQuery, quantity, unit, mealType?, loggedAt?, rawTranscript? }
 router.post("/", async (req, res) => {
   const { foodId, foodQuery, quantity, unit, mealType, loggedAt, rawTranscript } = req.body;
 
@@ -70,12 +63,10 @@ router.post("/", async (req, res) => {
     rawTranscript,
   });
 
+  broadcastMealsChanged();
   res.status(201).json(meal);
 });
 
-// PATCH /api/meals/:id
-// body: any of { foodId, foodQuery, quantity, unit, mealType, loggedAt }
-// omitted fields keep their current value; food/quantity/unit changes recompute macros
 router.patch("/:id", async (req, res) => {
   const existing = await MealLog.findById(req.params.id);
   if (!existing) {
@@ -106,15 +97,16 @@ router.patch("/:id", async (req, res) => {
   if (loggedAt) existing.loggedAt = new Date(loggedAt);
 
   await existing.save();
+  broadcastMealsChanged();
   res.json(existing);
 });
 
-// DELETE /api/meals/:id
 router.delete("/:id", async (req, res) => {
   const deleted = await MealLog.findByIdAndDelete(req.params.id);
   if (!deleted) {
     return res.status(404).json({ error: "NOT_FOUND" });
   }
+  broadcastMealsChanged();
   res.status(204).send();
 });
 

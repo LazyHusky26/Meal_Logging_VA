@@ -5,16 +5,13 @@ import { RoomConfiguration, RoomAgentDispatch } from "@livekit/protocol";
 
 const router = Router();
 
-const ROOM_NAME = "meal-logging-room";
 const AGENT_NAME = "meal-logging-agent";
 
-// POST /api/voice/token
-// Mints a short-lived LiveKit token for the browser to join the voice room.
-// The agent has agentName set (explicit dispatch mode - see agent/src/main.js),
-// so it only joins rooms that ask for it by name; that's done here via roomConfig
-// rather than requiring a separate dispatch API call.
+// Mints a token for a fresh room each session, and embeds the agent dispatch
+// request in roomConfig (the agent uses explicit dispatch - see agent/src/main.js).
 router.post("/token", async (req, res) => {
   const identity = `web-${randomUUID()}`;
+  const roomName = `meal-logging-${randomUUID()}`;
 
   const token = new AccessToken(process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET, {
     identity,
@@ -23,7 +20,7 @@ router.post("/token", async (req, res) => {
 
   token.addGrant({
     roomJoin: true,
-    room: ROOM_NAME,
+    room: roomName,
     canPublish: true,
     canSubscribe: true,
   });
@@ -35,7 +32,7 @@ router.post("/token", async (req, res) => {
   res.json({
     token: await token.toJwt(),
     url: process.env.LIVEKIT_URL,
-    roomName: ROOM_NAME,
+    roomName,
   });
 });
 

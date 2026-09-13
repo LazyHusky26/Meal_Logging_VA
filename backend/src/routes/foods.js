@@ -3,15 +3,12 @@ import { findFoodById, listAllFoods, searchFoods } from "../services/foodsServic
 
 const router = Router();
 
-// GET /api/foods?query=dal -> matches; no query -> full list
 router.get("/", (req, res) => {
   const { query } = req.query;
   const results = query ? searchFoods(query) : listAllFoods();
   res.json(results);
 });
 
-// GET /api/foods/:id -> single food record, including its valid units
-// (used by the frontend to populate the unit dropdown when editing an entry)
 router.get("/:id", (req, res) => {
   const food = findFoodById(req.params.id);
   if (!food) {

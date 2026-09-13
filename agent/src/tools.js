@@ -2,6 +2,11 @@ import { tool } from "@livekit/agents";
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000";
 
+// Detects an accidental "roti, milk" / "piece/glass" style combined call.
+function looksLikeMultipleItems(value) {
+  return typeof value === "string" && /[,/]| and /.test(value);
+}
+
 async function findRecentMeal({ foodQuery, from, to }) {
   const params = new URLSearchParams({ limit: "1", sort: "createdAt" });
   if (foodQuery) params.set("food", foodQuery);
@@ -50,6 +55,16 @@ export function createMealTools() {
         required: ["foodQuery", "quantity", "unit"],
       },
       execute: async (args) => {
+        if (looksLikeMultipleItems(args.foodQuery) || looksLikeMultipleItems(args.unit)) {
+          return {
+            ok: false,
+            error: "MULTIPLE_ITEMS_NOT_ALLOWED",
+            hint:
+              "This call combines more than one food into a single log_meal call. Call " +
+              "log_meal separately for each food — one foodQuery, one quantity, one unit per call.",
+          };
+        }
+
         const res = await fetch(`${BACKEND_URL}/api/meals`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

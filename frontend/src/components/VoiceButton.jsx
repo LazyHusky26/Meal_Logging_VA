@@ -4,10 +4,7 @@ import { MicIcon } from "../icons.jsx";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
-// Brief pause between the mic actually going live and telling the user it's
-// safe to talk — covers the WebRTC track-subscription warm-up on the agent
-// side, so the first word or two doesn't get clipped.
-const WARM_UP_MS = 1200;
+const WARM_UP_MS = 800; // lets the WebRTC track-subscription warm-up finish before we say "go ahead"
 
 const LABELS = {
   idle: "Tap to log a meal",
@@ -22,12 +19,6 @@ export default function VoiceButton({ onMealsChanged }) {
   const [error, setError] = useState(null);
   const roomRef = useRef(null);
   const warmUpTimer = useRef(null);
-
-  useEffect(() => {
-    if (status !== "listening") return;
-    const interval = setInterval(() => onMealsChanged?.(), 3000);
-    return () => clearInterval(interval);
-  }, [status, onMealsChanged]);
 
   useEffect(() => () => clearTimeout(warmUpTimer.current), []);
 

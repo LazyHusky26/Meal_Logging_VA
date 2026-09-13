@@ -32,7 +32,6 @@ export function searchFoods(query) {
   });
 }
 
-// exact id/name/alias match wins; otherwise fall back to the first substring match
 export function findBestFoodMatch(query) {
   const q = normalize(query);
   const exact = foods.find(
@@ -61,11 +60,6 @@ export function computeMacros(food, grams) {
   };
 }
 
-/**
- * Resolves a { foodId | foodQuery, quantity, unit } input into the food record,
- * matched unit, grams, and computed macros. Returns { error } on failure so
- * callers (routes, agent tools) can respond with a specific reason.
- */
 export function resolveMealItem({ foodId, foodQuery, quantity, unit }) {
   const food = foodId ? findFoodById(foodId) : findBestFoodMatch(foodQuery);
   if (!food) {
