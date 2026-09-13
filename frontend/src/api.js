@@ -1,8 +1,20 @@
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
-export async function fetchMeals() {
-  const res = await fetch(`${BACKEND_URL}/api/meals`);
+export async function fetchMeals({ from, to, limit } = {}) {
+  const params = new URLSearchParams();
+  if (from) params.set("from", from);
+  if (to) params.set("to", to);
+  if (limit) params.set("limit", limit);
+  const qs = params.toString();
+
+  const res = await fetch(`${BACKEND_URL}/api/meals${qs ? `?${qs}` : ""}`);
   if (!res.ok) throw new Error("Failed to load meals");
+  return res.json();
+}
+
+export async function fetchFood(foodId) {
+  const res = await fetch(`${BACKEND_URL}/api/foods/${foodId}`);
+  if (!res.ok) throw new Error("Failed to load food details");
   return res.json();
 }
 
